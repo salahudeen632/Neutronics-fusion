@@ -47,7 +47,7 @@ reflective_2 = openmc.Plane(
 )
 
 # specifies the region as below the universe boundary and inside the reflective surfaces
-region = -vac_surf & -reflective_1 & +reflective_2
+region = -vac_surf
 
 # creates a cell from the region and fills the cell with the dagmc geometry
 containing_cell = openmc.Cell(cell_id=9999, region=region, fill=dag_univ)
@@ -89,9 +89,11 @@ cell_tally.scores = ["heating"]
 
 # creates a mesh that covers the geometry
 mesh = openmc.RegularMesh()
-mesh.dimension = [100, 100, 100]
-mesh.lower_left = [0, 0, -350]  # x,y,z coordinates start at 0 as this is a sector model
-mesh.upper_right = [650, 650, 350]
+
+mesh.dimension = [25, 5, 25]
+   
+mesh.lower_left = [-1.15, -0.6, -1.25]  # x,y,z coordinates start at 0 as this is a sector model
+mesh.upper_right = [1.15, 0.6, 1.75]
 
 # makes a mesh tally using the previously created mesh and records heating on the mesh
 mesh_tally = openmc.Tally(name="heating_on_mesh")
