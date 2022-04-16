@@ -57,7 +57,7 @@ geometry = openmc.Geometry(root=[containing_cell])
 my_source = openmc.Source()
 
 # sets the location of the source to x=0 y=0 z=0
-my_source.space = openmc.stats.Point((0, 0, 5))
+my_source.space = openmc.stats.Point((0, 0, 20))
 
 # sets the direction to isotropic
 my_source.angle = openmc.stats.Isotropic()
@@ -78,8 +78,8 @@ materials = odw.Materials(
     },
 )
 settings = openmc.Settings()
-settings.batches = 50
-settings.particles = 1000000
+settings.batches = 500
+settings.particles = 100000
 settings.inactive = 0
 settings.run_mode = "fixed source"
 settings.source = my_source
@@ -87,10 +87,14 @@ settings.source = my_source
 cell_tally = openmc.Tally(name="heating")
 cell_tally.scores = ["heating"]
 
+
+cell_tally1 = openmc.Tally(name="")
+cell_tally1.scores = ["damage-energy"]
+
 # creates a mesh that covers the geometry
 mesh = openmc.RegularMesh()
 
-mesh.dimension = [25, 5, 25]
+mesh.dimension = [100, 50, 100]
    
 mesh.lower_left = [-1.15, -0.6, -1.25]  # x,y,z coordinates start at 0 as this is a sector model
 mesh.upper_right = [1.15, 0.6, 1.75]
@@ -101,8 +105,14 @@ mesh_filter = openmc.MeshFilter(mesh)
 mesh_tally.filters = [mesh_filter]
 mesh_tally.scores = ["heating"]
 
+
+mesh_tally1 = openmc.Tally(name="damage-energy_on_mesh")
+mesh_filter1 = openmc.MeshFilter(mesh)
+mesh_tally1.filters = [mesh_filter1]
+mesh_tally1.scores = ["damage-energy"]
+
 # groups the two tallies
-tallies = openmc.Tallies([cell_tally, mesh_tally])
+tallies = openmc.Tallies([cell_tally, mesh_tally,cell_tally1,mesh_tally1])
 odd.just_in_time_library_generator(
     libraries='ENDFB-7.1-NNDC',
     materials=materials
@@ -114,3 +124,34 @@ my_model = openmc.Model(
 
 # starts the simulation
 my_model.run()
+
+
+from openmc_mesh_tally_to_vtk import write_mesh_tally_to_vtk
+
+
+# open the results file
+sp = openmc.StatePoint("statepoint.500.h5")
+
+# access the tally using pandas dataframes
+
+
+
+# extracts the mesh tally result
+heating_mesh_tally = sp.get_tally(name="heating_on_mesh")
+
+
+
+
+# extracts the mesh tally result
+damage_mesh_tally = sp.get_tally(name="damage-energy_on_mesh")
+
+# writes the mesh tally as a vtk file
+write_mesh_tally_to_vtk(
+    tally=heating_mesh_tally,
+    filename="heating_openmc_mesh.vtk",
+)
+
+write_mesh_tally_to_vtk(
+    tally=damage_mesh_tally,
+    filename="damage_openmc_mesh.vtk",
+)
