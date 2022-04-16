@@ -105,7 +105,6 @@ mesh_filter = openmc.MeshFilter(mesh)
 mesh_tally.filters = [mesh_filter]
 mesh_tally.scores = ["heating"]
 
-
 mesh_tally1 = openmc.Tally(name="damage-energy_on_mesh")
 mesh_filter1 = openmc.MeshFilter(mesh)
 mesh_tally1.filters = [mesh_filter1]
