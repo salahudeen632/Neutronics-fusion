@@ -81,7 +81,7 @@ settings = openmc.Settings()
 settings.batches = 50
 settings.particles = 1000000
 settings.inactive = 0
-
+settings.run_mode = "fixed source"
 settings.source = my_source
 # adds a tally to record the heat deposited in entire geometry
 cell_tally = openmc.Tally(name="heating")
