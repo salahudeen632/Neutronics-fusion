@@ -1,8 +1,6 @@
-import subprocess
-cmd = '. $CONDA_PREFIX/etc/profile.d/conda.sh && conda activate paramak_env' 
-subprocess.call(cmd, shell=True, executable='/bin/bash')
+
 import os
-os.system("conda activate paramak_env")
+
 import paramak
 rotated_circle = paramak.ExtrudeCircleShape(
     points=[(0, 0),], radius=0.95, distance=1.2, workplane="XZ", name="part0.stl",
